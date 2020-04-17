@@ -1,0 +1,1 @@
+export const data = [{date : '2020-04-01', type : 'SOLVED'}];
