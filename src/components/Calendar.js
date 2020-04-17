@@ -22,14 +22,12 @@ class ReactCalendar extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    console.log(prevState.data, getItem("datas"));
-
     const data = getItem("dates");
     let nextState = {};
     if (prevState.data !== data) {
-      let dataMap = {} ;
-      (data || []).forEach((d) => {  
-        dataMap[d.date] = d.type;  
+      let dataMap = {};
+      (data || []).forEach((d) => {
+        dataMap[d.date] = d.type;
       });
 
       nextState.dataMap = dataMap;
@@ -37,17 +35,7 @@ class ReactCalendar extends React.Component {
     return nextState;
   }
 
-//   componentDidMount() {
-//     let { dataMap, data } = this.state;
-//     (data || []).forEach((d) => {
-//       dataMap = { ...dataMap, [d.date]: d.type };
-//     });
-
-//     this.setState({ dataMap });
-//   }
-
   handleChange = (date) => {
-    console.log("click", date);
     this.showOptionSelector();
     this.setState({ date });
   };
@@ -105,14 +93,12 @@ class ReactCalendar extends React.Component {
     const formattedData = moment(date).format("YYYY-MM-DD");
     const hasDate = dataMap[formattedData];
 
-    console.log("hasDate", hasDate, dataMap[formattedData]); 
-
     if (hasDate) {
-      dataMap[formattedData] = type; 
+      const idx = data.findIndex((d) => d.date === formattedData);
+      if (idx >= 0) data[idx] = { ...data[idx], type };
     } else {
       data.push(obj);
     }
-    console.log("datamap", dataMap, data);
 
     setItem("dates", data);
 
