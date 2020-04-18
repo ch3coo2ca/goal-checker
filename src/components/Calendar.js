@@ -72,13 +72,18 @@ class ReactCalendar extends React.Component {
         "react-calendar__month-view__days__day"
       );
       for (let i = 0; i < buttons.length; i++) {
-        const time = buttons[i].children[0].attributes["aria-label"].value;
+        const childElem = buttons[i].children[0];
+        const time = childElem.attributes["aria-label"].value;
         const formattedTime = moment(time).format("YYYY-MM-DD");
         if (date == formattedTime) {
-          if (type === TYPE.SOLVED)
-            buttons[i].children[0].classList.add("solved");
-          if (type === TYPE.NOT_SOLVED)
-            buttons[i].children[0].classList.add("not-solved");
+          if (type === TYPE.SOLVED) {
+            childElem.classList.remove("not-solved");
+            childElem.classList.add("solved");
+          }
+          if (type === TYPE.NOT_SOLVED) {
+            childElem.classList.remove("solved");
+            childElem.classList.add("not-solved");
+          }
         }
       }
     });
