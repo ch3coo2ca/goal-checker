@@ -1,7 +1,28 @@
-$tool-tip : #e7f5ff; 
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap");
+
+$tool-tip: #324162;
+$active-tile: #bac8ff;
+$app-background: #eef1f7;
+$red: #ff6f69;
+$green: #96ceb4;
+$hover: #eaeef4;
+$font-color: #495057;
+
+html,
+body,
+#root,
+#root > div {
+  height: 100%;
+  margin: 0;
+}
 
 .App {
   text-align: center;
+  background: $app-background;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: $font-color;
 }
 
 .App-logo {
@@ -28,50 +49,136 @@ $tool-tip : #e7f5ff;
 //common
 .flex {
   display: flex;
-} 
+}
 
 //component
 button {
   position: relative;
   overflow: visible !important;
+  font-family: "Manrope", sans-serif !important;
 }
 
 .react-calendar {
+  width: 500px;
+  border: 0;
+  border-radius: 10px;
+  box-shadow: 5px 7px 15px 5px #e6e9f3;
+  font-family: "Manrope", sans-serif !important;
+
+  abbr {
+    text-decoration: none;
+  }
+
+  .react-calendar__navigation__next2-button,
+  .react-calendar__navigation__prev2-button {
+    display: none;
+  }
+
+  .navigator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $font-color;
+  }
+  .react-calendar__navigation__label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: $font-color;
+  }
+
   .option {
     background: $tool-tip;
     width: 120px;
     height: 40px;
-    position: absolute; 
-    color : black;
+    position: absolute;
+    color: white;
     bottom: -49px;
     right: 0;
     z-index: 100;
-    left: 30%;
-    margin-left: -50px; 
-    border-radius: 5px; 
-    justify-content: space-around; 
+    left: 36%;
+    margin-left: -50px;
+    border-radius: 5px;
+    justify-content: space-around;
     align-items: center;
-    
+
     &::before {
-      position: absolute; 
+      position: absolute;
       bottom: 100%;
-      left: 50%; 
+      left: 50%;
       margin-left: -5px;
       width: 0;
       border-bottom: 5px solid $tool-tip;
-      border-right: 5px solid transparent; 
+      border-right: 5px solid transparent;
       border-left: 5px solid transparent;
       content: " ";
       font-size: 0;
-      line-height: 0; 
-    } 
+      line-height: 0;
+    }
 
     > div {
-      flex : 1; 
-      height : 100%; 
-      display: flex; 
-      align-items : center;  
-      justify-content: center;
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center; 
+
+      &::hover {
+        font-weight: 600; 
+        font-size: 1.1rem;
+      }
     }
+  }
+
+  .react-calendar__month-view__days__day {
+    abbr {
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+
+      &.solved {
+        background: $green !important;
+        color: white;
+        font-weight: bold;
+      }
+
+      &.not-solved {
+        background: $red !important;
+        color: white;
+        font-weight: bold;
+      }
+    }
+  }
+
+  .react-calendar__tile:enabled:hover,
+  .react-calendar__tile:enabled:focus {
+    background-color: $hover !important;
+  }
+
+  .react-calendar__navigation {
+    button[disabled] {
+      background-color: white;
+    }
+  }
+  .react-calendar__tile--active {
+    background: $hover !important;
+    border-radius: 5px;
+    color: $font-color;
+    &::enabled,
+    &::enabled:hover,
+    &::focus {
+      background: $hover;
+    }
+  }
+
+  .react-calendar__tile--now {
+    background: none;
   }
 }

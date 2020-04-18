@@ -2,11 +2,14 @@ import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import moment from "moment";
 
-// import { data } from "data/data.js";
-
 import * as TYPE from "const/dataType.js";
 
-import { RadioButtonUnchecked, Close } from "@material-ui/icons";
+import {
+  RadioButtonUnchecked,
+  Close,
+  NavigateBefore,
+  NavigateNext,
+} from "@material-ui/icons";
 
 import { getItem, setItem } from "util/localStorage.js";
 
@@ -18,6 +21,7 @@ class ReactCalendar extends React.Component {
       date: new Date(),
       dataMap: {},
       data: getItem("dates"),
+      currentMonth: moment().month() + 1,
     };
   }
 
@@ -35,9 +39,49 @@ class ReactCalendar extends React.Component {
     return nextState;
   }
 
+  componentDidMount() {
+    this.colorSelectedDates();
+  }
   handleChange = (date) => {
     this.showOptionSelector();
-    this.setState({ date });
+    this.setState({ date }, () => this.colorSelectedDates());
+  };
+
+  handleChangeMonth = (type) => {
+    let { currentMonth } = this.state;
+    if (type === "PREV") {
+      currentMonth = currentMonth - 1;
+      currentMonth = currentMonth > 0 ? currentMonth : 12;
+    } else if (type === "NEXT") {
+      currentMonth = currentMonth + 1;
+      currentMonth = currentMonth < 13 ? currentMonth : 1;
+    }
+
+    this.setState({ currentMonth }, () => this.colorSelectedDates());
+  };
+
+  colorSelectedDates = () => {
+    const { data, currentMonth } = this.state;
+
+    const filteredData = data.filter(
+      (d) => moment(d.date).month() + 1 == currentMonth
+    );
+
+    filteredData.forEach(({ date, type }) => {
+      const buttons = document.getElementsByClassName(
+        "react-calendar__month-view__days__day"
+      );
+      for (let i = 0; i < buttons.length; i++) {
+        const time = buttons[i].children[0].attributes["aria-label"].value;
+        const formattedTime = moment(time).format("YYYY-MM-DD");
+        if (date == formattedTime) {
+          if (type === TYPE.SOLVED)
+            buttons[i].children[0].classList.add("solved");
+          if (type === TYPE.NOT_SOLVED)
+            buttons[i].children[0].classList.add("not-solved");
+        }
+      }
+    });
   };
 
   hideOptionSelector = () => {
@@ -53,13 +97,13 @@ class ReactCalendar extends React.Component {
     elem.className = "option flex flex-center";
 
     const button1 = document.createElement("div");
-    button1.innerHTML = "1";
+    button1.innerHTML = "O";
     button1.addEventListener("click", (e) =>
       this.handleSelectType(e, TYPE.SOLVED)
     );
 
     const button2 = document.createElement("div");
-    button2.innerHTML = "2";
+    button2.innerHTML = "X";
     button2.addEventListener("click", (e) =>
       this.handleSelectType(e, TYPE.NOT_SOLVED)
     );
@@ -102,13 +146,35 @@ class ReactCalendar extends React.Component {
 
     setItem("dates", data);
 
-    this.setState({ data, dataMap });
+    this.colorSelectedDates();
+    this.setState({ data, dataMap }, () => this.hideOptionSelector());
   };
 
   render() {
     return (
       <div>
-        <Calendar onChange={this.handleChange} />
+        <Calendar
+          locale={"en-US"}
+          minDetail={"month"}
+          onChange={this.handleChange}
+          showNeighboringMonth={false}
+          prevLabel={
+            <div
+              className="navigator"
+              onClick={() => this.handleChangeMonth("PREV")}
+            >
+              <NavigateBefore />
+            </div>
+          }
+          nextLabel={
+            <div
+              className="navigator"
+              onClick={() => this.handleChangeMonth("NEXT")}
+            >
+              <NavigateNext />
+            </div>
+          }
+        />
       </div>
     );
   }
