@@ -1,6 +1,8 @@
 {
   "name": "goal-checker",
+  "main": "public/electron.js",
   "version": "0.1.0",
+  "homepage": "./",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.10",
@@ -9,6 +11,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "cross-env": "^7.0.2",
+    "electron-is-dev": "^1.2.0",
     "moment": "^2.24.0",
     "node-sass": "^4.13.1",
     "react": "^16.13.1",
@@ -17,10 +20,30 @@
     "react-scripts": "3.4.1"
   },
   "scripts": {
-    "start": "cross-env NODE_PATH=src/ react-scripts start",
-    "build": "cross-env NODE_PATH=src/ react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "electron-dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
+    "postinstall": "electron-builder install-app-deps",
+    "preelectron-pack": "yarn build",
+    "electron-pack": "electron-builder build -w",
+    "start": "cross-env NODE_PATH=src/ rescripts start",
+    "build": "cross-env NODE_PATH=src/ rescripts build",
+    "test": "rescripts test",
+    "eject": "rescripts eject"
+  },
+  "author": {
+    "name": "jylee"
+  },
+  "build": {
+    "appId": "com.jylee.goal-checker",
+    "productName": "GoalChecker",
+    "copyright": "Copyright Copyright © 2019 ${author}",
+    "directories": {
+      "buildResources": "assets"
+    },
+    "electronVersion": "4.2.8",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ]
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -36,5 +59,13 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@rescripts/cli": "^0.0.14",
+    "@rescripts/rescript-env": "^0.0.12",
+    "concurrently": "^5.1.0",
+    "electron": "^8.2.3",
+    "electron-builder": "^22.5.1",
+    "wait-on": "^4.0.2"
   }
 }
