@@ -20,13 +20,14 @@ class ReactCalendar extends React.Component {
     this.state = {
       date: new Date(),
       dataMap: {},
-      data: getItem("dates"),
+      // data: getItem("dates"),
       currentMonth: moment().month() + 1,
     };
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const data = getItem("dates");
+    // const data = getItem("dates"); 
+    const {data} = nextProps; 
     let nextState = {};
     if (prevState.data !== data) {
       let dataMap = {};
@@ -60,8 +61,9 @@ class ReactCalendar extends React.Component {
     this.setState({ currentMonth }, () => this.colorSelectedDates());
   };
 
-  colorSelectedDates = () => {
-    const { data, currentMonth } = this.state;
+  colorSelectedDates = () => { 
+    const {data} = this.props;
+    const {  currentMonth } = this.state;
 
     const filteredData = data.filter(
       (d) => moment(d.date).month() + 1 == currentMonth
@@ -125,8 +127,9 @@ class ReactCalendar extends React.Component {
   };
 
   handleSelectType = (e, type) => {
-    e.stopPropagation();
-    let { dataMap, date, data } = this.state;
+    e.stopPropagation(); 
+    let {data, onUpdate} = this.props; 
+    let { dataMap, date } = this.state;
     let obj = {};
 
     if (data.length < 1) data = [];
@@ -152,7 +155,9 @@ class ReactCalendar extends React.Component {
     setItem("dates", data);
 
     this.colorSelectedDates();
-    this.setState({ data, dataMap }, () => this.hideOptionSelector());
+    onUpdate(data); 
+    
+    this.setState({ dataMap }, () => this.hideOptionSelector());
   };
 
   render() {
