@@ -5,32 +5,41 @@ import "react-calendar/dist/Calendar.css";
 import "styles/App.scss";
 
 import * as FS from "util/fileSave.js";
-import { getItem } from "util/localStorage.js";
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: getItem("dates"),
+      data: [],
     };
   }
 
-  updateData = (data) => {
-    this.setState({ data }); 
+  async componentDidMount() {
+    const data = await FS.readFile();
+    this.setState({ data });
+  }
+
+  handleUpdateData = (data) => {
+    FS.saveFile(data);
+    this.setState({ data });
   };
-  
-  render() { 
+
+  handleLoadData = async (e) => {
+    e.stopPropagation();
+    const data = await FS.readFile();
+
+    this.setState({ data });
+  };
+
+  render() {
     const { data } = this.state;
     return (
       <div className="App">
-        <Calendar data={data} onUpdate={this.updateData} />
+        <Calendar data={data} onUpdate={this.handleUpdateData} />
         <input
           type="button"
-          value="ddd"
-          onClick={(e) => {
-            e.stopPropagation();
-            FS.saveFile(data);
-          }}
+          value="load"
+          onClick={(e) => this.handleLoadData(e)}
         />
       </div>
     );

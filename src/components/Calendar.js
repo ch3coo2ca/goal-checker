@@ -11,23 +11,18 @@ import {
   NavigateNext,
 } from "@material-ui/icons";
 
-import { getItem, setItem } from "util/localStorage.js";
-
-// let data = getItem('dates');
 class ReactCalendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       date: new Date(),
       dataMap: {},
-      // data: getItem("dates"),
       currentMonth: moment().month() + 1,
     };
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    // const data = getItem("dates"); 
-    const {data} = nextProps; 
+    const { data } = nextProps;
     let nextState = {};
     if (prevState.data !== data) {
       let dataMap = {};
@@ -43,6 +38,11 @@ class ReactCalendar extends React.Component {
   componentDidMount() {
     this.colorSelectedDates();
   }
+
+  componentDidUpdate() {
+    this.colorSelectedDates();
+  }
+
   handleChange = (date) => {
     this.showOptionSelector();
     this.setState({ date }, () => this.colorSelectedDates());
@@ -61,9 +61,9 @@ class ReactCalendar extends React.Component {
     this.setState({ currentMonth }, () => this.colorSelectedDates());
   };
 
-  colorSelectedDates = () => { 
-    const {data} = this.props;
-    const {  currentMonth } = this.state;
+  colorSelectedDates = () => {
+    const { data } = this.props;
+    const { currentMonth } = this.state;
 
     const filteredData = data.filter(
       (d) => moment(d.date).month() + 1 == currentMonth
@@ -127,8 +127,8 @@ class ReactCalendar extends React.Component {
   };
 
   handleSelectType = (e, type) => {
-    e.stopPropagation(); 
-    let {data, onUpdate} = this.props; 
+    e.stopPropagation();
+    let { data, onUpdate } = this.props;
     let { dataMap, date } = this.state;
     let obj = {};
 
@@ -152,11 +152,9 @@ class ReactCalendar extends React.Component {
       data.push(obj);
     }
 
-    setItem("dates", data);
-
     this.colorSelectedDates();
-    onUpdate(data); 
-    
+    onUpdate(data);
+
     this.setState({ dataMap }, () => this.hideOptionSelector());
   };
 
