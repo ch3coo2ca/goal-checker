@@ -1,17 +1,14 @@
 // import { app, BrowserWindow } from "electron";
 // import * as isDev from "electron-is-dev";
 // import * as path from "path";
-
+const moment = require("moment");
 const electron = require("electron");
 const { globalShortcut, app } = electron;
 const BrowserWindow = electron.BrowserWindow;
-const {
-  default: installExtension,
-  REACT_DEVELOPER_TOOLS,
-} = require("electron-devtools-installer");
 
 const path = require("path");
 const isDev = require("electron-is-dev");
+const fs = require("fs");
 
 let mainWindow;
 
@@ -31,22 +28,39 @@ function createWindow() {
   // Open the DevTools.
   if (isDev) {
     mainWindow.webContents.openDevTools();
-  } 
-  
+  }
+
   mainWindow.on("closed", () => (mainWindow = null));
 }
 
-// app.whenReady().then(() => {
-//   installExtension(REACT_DEVELOPER_TOOLS)
-//     .then((name) => console.log(`Added Extension : ${name}`))
-//     .catch((err) => console.error("An error occured ", err));
-// });
+const filePath = `${app.getPath("userData")}\\Logs`;
+const filename = "GoalChecker.log";
+const date = moment().format("YYYYMMDD");
 
 app.on("ready", () => {
   createWindow();
   globalShortcut.register("CommandOrControl+Shift+I", () => {
     mainWindow.webContents.openDevTools();
   });
+
+  //Check for Logs Directory
+  if (!fs.existsSync(filePath)) {
+    fs.mkdir(filePath, (err) => {
+      if (!err) {
+        log(`Directory : ${filePath} created.`);
+        const path = `${filePath}\\${filename}.${date}`;
+
+        fs.writeFile(path, "", (err) => {
+          if (err) {
+            log(`File : ${path} initialize error.`, err);
+            return;
+          }
+
+          log(`File : ${path} created.`);
+        });
+      }
+    });
+  }
 });
 
 app.on("window-all-closed", () => {
@@ -64,3 +78,21 @@ app.on("activate", () => {
     createWindow();
   }
 });
+
+const log = (msg, err) => {
+  const timeStamp = moment().toString();
+  if (!err) err = "";
+
+  const log = `${timeStamp} | ${msg} | ${err} \n`;
+
+  fs.appendFile(
+    `${app.getPath("userData")}\\Logs\\${filename}.${date}`,
+    log,
+    (err) => {
+      if (err) {
+        log(`File : ${filename} append failure.`);
+        return;
+      }
+    }
+  );
+};

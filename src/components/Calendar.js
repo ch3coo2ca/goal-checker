@@ -3,6 +3,7 @@ import Calendar from "react-calendar";
 import moment from "moment";
 
 import * as TYPE from "const/dataType.js";
+import * as FS from "util/fileSave.js";
 
 import {
   RadioButtonUnchecked,
@@ -154,7 +155,8 @@ class ReactCalendar extends React.Component {
 
     this.colorSelectedDates();
     onUpdate(data);
-
+    
+    FS.log(`${TYPE.DATE_SELECT} => ${JSON.stringify(data)}`); 
     this.setState({ dataMap }, () => this.hideOptionSelector());
   };
 
@@ -162,7 +164,7 @@ class ReactCalendar extends React.Component {
     return (
       <div>
         <Calendar
-          locale={"en-US"}
+          locale={"en-US"} 
           minDetail={"month"}
           onChange={this.handleChange}
           showNeighboringMonth={false}
