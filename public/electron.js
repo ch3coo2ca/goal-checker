@@ -3,7 +3,7 @@
 // import * as path from "path";
 
 const electron = require("electron");
-const app = electron.app;
+const { globalShortcut, app } = electron;
 const BrowserWindow = electron.BrowserWindow;
 const {
   default: installExtension,
@@ -20,7 +20,7 @@ function createWindow() {
     width: 900,
     height: 680,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
     },
   });
   mainWindow.loadURL(
@@ -28,11 +28,11 @@ function createWindow() {
       ? "http://localhost:3000"
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
-  // if (isDev) {
   // Open the DevTools.
-  //BrowserWindow.addDevToolsExtension('<location to your react chrome extension>');
-  mainWindow.webContents.openDevTools();
-  // }
+  if (isDev) {
+    mainWindow.webContents.openDevTools();
+  } 
+  
   mainWindow.on("closed", () => (mainWindow = null));
 }
 
@@ -44,12 +44,19 @@ function createWindow() {
 
 app.on("ready", () => {
   createWindow();
+  globalShortcut.register("CommandOrControl+Shift+I", () => {
+    mainWindow.webContents.openDevTools();
+  });
 });
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
+});
+
+app.on("will-quit", () => {
+  globalShortcut.unregisterAll();
 });
 
 app.on("activate", () => {
