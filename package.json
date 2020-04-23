@@ -1,7 +1,7 @@
 {
   "name": "goal-checker",
   "main": "public/electron.js",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "./",
   "private": true,
   "dependencies": {
@@ -13,7 +13,6 @@
     "cross-env": "^7.0.2",
     "electron-devtools-installer": "^3.0.0",
     "electron-is-dev": "^1.2.0",
-    "file-saver": "^2.0.2",
     "moment": "^2.24.0",
     "node-sass": "^4.13.1",
     "react": "^16.13.1",
@@ -37,7 +36,7 @@
   "build": {
     "appId": "com.jylee.goal-checker",
     "productName": "GoalChecker",
-    "copyright": "Copyright Copyright © 2019 ${author}",
+    "copyright": "Copyright Copyright © 2020 ${author}",
     "directories": {
       "buildResources": "assets"
     },

@@ -65,7 +65,7 @@ class ReactCalendar extends React.Component {
   colorSelectedDates = () => {
     const { data } = this.props;
     const { currentMonth } = this.state;
-
+    
     const filteredData = data.filter(
       (d) => moment(d.date).month() + 1 == currentMonth
     );
@@ -77,7 +77,7 @@ class ReactCalendar extends React.Component {
       for (let i = 0; i < buttons.length; i++) {
         const childElem = buttons[i].children[0];
         const time = childElem.attributes["aria-label"].value;
-        const formattedTime = moment(time).format("YYYY-MM-DD");
+        const formattedTime = moment(time).format("YYYY-MM-DD"); 
         if (date == formattedTime) {
           if (type === TYPE.SOLVED) {
             childElem.classList.remove("not-solved");
@@ -155,7 +155,7 @@ class ReactCalendar extends React.Component {
 
     this.colorSelectedDates();
     onUpdate(data);
-    
+
     FS.log(`${TYPE.DATE_SELECT} => ${JSON.stringify(data)}`); 
     this.setState({ dataMap }, () => this.hideOptionSelector());
   };

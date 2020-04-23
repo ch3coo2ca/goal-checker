@@ -3,12 +3,16 @@
 // import * as path from "path";
 const moment = require("moment");
 const electron = require("electron");
-const { globalShortcut, app } = electron;
+const { globalShortcut, app, Menu } = electron;
 const BrowserWindow = electron.BrowserWindow;
 
 const path = require("path");
 const isDev = require("electron-is-dev");
 const fs = require("fs");
+
+const filePath = `${app.getPath("userData")}\\Logs`;
+const filename = "GoalChecker.log";
+const date = moment().format("YYYYMMDD");
 
 let mainWindow;
 
@@ -33,15 +37,56 @@ function createWindow() {
   mainWindow.on("closed", () => (mainWindow = null));
 }
 
-const filePath = `${app.getPath("userData")}\\Logs`;
-const filename = "GoalChecker.log";
-const date = moment().format("YYYYMMDD");
+const template = [
+  {
+    label: "File",
+    submenu: [
+      {
+        label: "Import Backup File",
+      },
+      {
+        label: "Export Backup File",
+      },
+      {
+        type: "separator",
+      },
+      {
+        role: "quit",
+      },
+    ],
+  },
+  {
+    label: "View",
+    submenu: [
+      {
+        role: "Reload",
+      },
+      {
+        type: "separator",
+      },
+      {
+        role: "toggledevtools",
+      },
+      {
+        role: "togglefullscreen",
+      },
+    ],
+  },
+  {
+    label: "Help",
+    submenu: [
+      {
+        role: "About",
+      },
+    ],
+  },
+];
 
 app.on("ready", () => {
   createWindow();
-  globalShortcut.register("CommandOrControl+Shift+I", () => {
-    mainWindow.webContents.openDevTools();
-  });
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 
   //Check for Logs Directory
   if (!fs.existsSync(filePath)) {
