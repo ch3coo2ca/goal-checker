@@ -1,22 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Calendar from "react-calendar";
 import moment from "moment";
 
 import * as TYPE from "const/dataType.js";
 import * as FS from "util/fileSave.js";
 
-import {
-  RadioButtonUnchecked,
-  Close,
-  NavigateBefore,
-  NavigateNext,
-} from "@material-ui/icons";
+import { NavigateBefore, NavigateNext } from "@material-ui/icons";
 
 class ReactCalendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      date: new Date(),
+      date: null,
       dataMap: {},
       currentMonth: moment().month() + 1,
     };
@@ -45,7 +40,16 @@ class ReactCalendar extends React.Component {
   }
 
   handleChange = (date) => {
-    this.showOptionSelector();
+    const { date: currentDate } = this.state;
+    const isSameDate = moment(currentDate).isSame(moment(date));
+
+    if (isSameDate) {
+      this.toggleOptionSelector();
+    } else {
+      this.hideOptionSelector();
+      this.showOptionSelector();
+    }
+
     this.setState({ date }, () => this.colorSelectedDates());
   };
 
@@ -65,7 +69,7 @@ class ReactCalendar extends React.Component {
   colorSelectedDates = () => {
     const { data } = this.props;
     const { currentMonth } = this.state;
-    
+
     const filteredData = data.filter(
       (d) => moment(d.date).month() + 1 == currentMonth
     );
@@ -77,7 +81,7 @@ class ReactCalendar extends React.Component {
       for (let i = 0; i < buttons.length; i++) {
         const childElem = buttons[i].children[0];
         const time = childElem.attributes["aria-label"].value;
-        const formattedTime = moment(time).format("YYYY-MM-DD"); 
+        const formattedTime = moment(time).format("YYYY-MM-DD");
         if (date == formattedTime) {
           if (type === TYPE.SOLVED) {
             childElem.classList.remove("not-solved");
@@ -92,14 +96,17 @@ class ReactCalendar extends React.Component {
     });
   };
 
+  toggleOptionSelector = () => {
+    const optionEl = document.getElementById("optionSelector");
+    optionEl ? this.hideOptionSelector() : this.showOptionSelector();
+  };
+
   hideOptionSelector = () => {
     const optionEl = document.getElementById("optionSelector");
     if (optionEl) optionEl.parentNode.removeChild(optionEl);
   };
 
   showOptionSelector = () => {
-    this.hideOptionSelector();
-
     const elem = document.createElement("div");
     elem.id = "optionSelector";
     elem.className = "option flex flex-center";
@@ -133,8 +140,6 @@ class ReactCalendar extends React.Component {
     let { dataMap, date } = this.state;
     let obj = {};
 
-    if (data.length < 1) data = [];
-
     if (type === TYPE.SOLVED) {
       obj.date = moment(date).format("YYYY-MM-DD");
       obj.type = TYPE.SOLVED;
@@ -156,7 +161,7 @@ class ReactCalendar extends React.Component {
     this.colorSelectedDates();
     onUpdate(data);
 
-    FS.log(`${TYPE.DATE_SELECT} => ${JSON.stringify(data)}`); 
+    FS.log(`${TYPE.DATE_SELECT} => ${JSON.stringify(data)}`);
     this.setState({ dataMap }, () => this.hideOptionSelector());
   };
 
@@ -164,7 +169,7 @@ class ReactCalendar extends React.Component {
     return (
       <div>
         <Calendar
-          locale={"en-US"} 
+          locale={"en-US"}
           minDetail={"month"}
           onChange={this.handleChange}
           showNeighboringMonth={false}
